@@ -2,17 +2,24 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 declare type Config = {
     application_id: string;
+    locale?: string;
+}
+
+declare type TranslationValue = {
+    locale: string;
+    value: string;
 }
 
 declare type Translation = {
     key: string;
-    value: string;
+    values: TranslationValue[];
 }
 
 const base_url = 'https://api.apalize.com/public';
 
 let application_id: null | string = null;
 let visitor_id: null | string = null;
+let user_locale: null | string = null;
 
 let translations: null | Translation[] = null;
 let missing_translations: Translation[] = [];
@@ -25,6 +32,10 @@ const slugify = (text: string) => {
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
+}
+
+const setLocale = (locale: string) => {
+    user_locale = locale;
 }
 
 const loadTranslations = async () => {
@@ -75,12 +86,18 @@ const translate = (key: string, variables?: Record<string, string>, default_valu
             missing_translations.push(
                 {
                     key: key_slug,
-                    value: key !== key_slug ? key : ''
+                    values: user_locale && default_value ? [{
+                        locale: user_locale,
+                        value: default_value
+                    }
+                    ] : []
                 }
             );
         }
 
-        let value = translation?.value ?? default_value ?? key;
+        const translation_value = translation?.values?.find(value => value.locale === user_locale)?.value ?? null;
+
+        let value = translation_value ?? default_value ?? key;
 
         if (variables) {
             for (const variable in Object.keys(variables)) {
@@ -97,6 +114,8 @@ const translate = (key: string, variables?: Record<string, string>, default_valu
 
 export default async function (config: Config) {
     application_id = config.application_id;
+    user_locale = config.locale ?? null;
+
     await loadTranslations();
 
     const fingerprint = FingerprintJS.load();
@@ -109,6 +128,8 @@ export default async function (config: Config) {
 
     return {
         t: translate,
-        translate: translate
+        translate: translate,
+        setLocale,
+        translations: translations
     }
 }
