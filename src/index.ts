@@ -105,7 +105,7 @@ export default async function (config: Config) {
             visitor_id = result.visitorId
         });
 
-    setTimeout(pushMissingTranslations, 5000);
+    setTimeout(pushMissingTranslations, 10000);
 
     return {
         t: translate,
