@@ -65,7 +65,8 @@ const pushMissingTranslations = () => {
         },
         body: JSON.stringify({
             translations: missing_translations,
-            visitor_id: visitor_id
+            visitor_id: visitor_id,
+            referrer: window?.document?.location?.href ?? null
         })
     });
 }
