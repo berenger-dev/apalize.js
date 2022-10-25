@@ -2,6 +2,7 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 declare type Config = {
     application_id: string;
+    host?: string;
     locale?: string;
 }
 
@@ -15,7 +16,7 @@ declare type Translation = {
     values: TranslationValue[];
 }
 
-const base_url = 'https://api.apalize.com/public';
+let base_url = 'https://api.apalize.com/public';
 
 let application_id: null | string = null;
 let visitor_id: null | string = null;
@@ -115,6 +116,7 @@ const translate = (key: string, variables?: Record<string, string>, default_valu
 export default async function (config: Config) {
     application_id = config.application_id;
     user_locale = config.locale ?? null;
+    if (config.host) base_url = config.host;
 
     await loadTranslations();
 
