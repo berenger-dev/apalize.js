@@ -1,6 +1,6 @@
 {
   "name": "apalize.js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Translate your app with ease with Apalize.com",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

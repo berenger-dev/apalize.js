@@ -44,11 +44,14 @@ const loadTranslations = async () => {
             console.error("Application ID is not set");
             return;
         }
+        try {
+            const response = await fetch(`${base_url}/${application_id}.json`);
+            const data = await response.json();
 
-        const response = await fetch(`${base_url}/${application_id}.json`);
-        const data = await response.json();
-
-        translations = data.translations;
+            translations = data.translations;
+        } catch (e) {
+            console.error(e);
+        }
     } catch (e) {
         console.error(e);
     }
